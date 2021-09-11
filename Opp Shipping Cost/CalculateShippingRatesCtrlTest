@@ -1,0 +1,77 @@
+/**
+* Apex Unit test for CalculateShippingRatesCtrl.cls
+* */
+@isTest
+public class CalculateShippingRatesCtrlTest {
+
+    @isTest
+    static void validateApplyShippingRates() {
+        String oppID = [Select ID from Opportunity][0].id;
+        try{
+            Test.startTest();
+        	CalculateShippingRatesCtrl.calcRates(oppID);
+            Test.stopTest();
+        }catch(Exception ex) {
+            
+        }
+        try{
+        	CalculateShippingRatesCtrl.updateQuote(oppID, '[{"alerts":"null", "totalCharge":"45.86 AUD", "totalSurcharge":"5.86 AUD", "totalWeight":"1.0"}]');
+        }catch(Exception ex) {
+            
+        }
+    }
+    
+    @testSetup
+    static void setup() {
+        Account acc= new Account();
+        acc.Name = 'Carlisle Construction Material Test';
+        acc.BillingCity = 'Carlisle';
+        acc.BillingCountry = 'US';
+        acc.BillingPostalCode='17015';
+        acc.BillingState ='PA';
+        acc.BillingStreet='123 ratnair high way';
+        acc.ShippingCountry = 'United States';
+        acc.ShippingCity = 'Wheeling';
+        acc.ShippingCountry = 'US';
+        acc.ShippingPostalCode = '26003';
+        acc.ShippingState = 'West Virginia';
+        acc.ShippingState = 'WV';
+        acc.ShippingStreet = '53 14th Street Ste 208';        
+        insert Acc;
+        
+    	Product2 objProduct = new Product2(Name = 'Printer-1', family = 'Hardware');                                      
+        insert objProduct;
+       
+        PriceBookEntry objPBE = new PriceBookEntry(UnitPrice = 300, PriceBook2Id = Test.getStandardPricebookId(),
+                                                        Product2Id = objProduct.Id, IsActive = true);                                             
+        insert objPBE;         
+        
+        Opportunity oppt = new Opportunity();
+        oppt.Name ='Test opportunity';
+        oppt.AccountId = Acc.Id;
+        oppt.StageName = 'Proposal';
+        oppt.Amount = 3000;
+        oppt.CloseDate = System.today() +30 ;
+        insert oppt;
+        
+        
+        // Add product and Pricebook to the particular opportunity using OpportunityLineItem 
+        OpportunityLineItem oppLineItem = new OpportunityLineItem();
+        oppLineItem.OpportunityId = oppt.Id;
+        oppLineItem.PricebookEntryId = objPBE.Id;
+        oppLineItem.UnitPrice = 7000;
+        oppLineItem.Quantity = 5;
+        oppLineItem.Total_Weight__c = 1;
+        insert oppLineItem;   
+        
+        Astonous_SM__Shipping_Preference__c prefRecord = new Astonous_SM__Shipping_Preference__c(Astonous_SM__Building_Location__c = 'Side', Astonous_SM__Building_Type__c = 'BUILDING', Astonous_SM__City__c = 'Carlisle',
+                                                                                                 Astonous_SM__Company__c = 'SprintRay inc', Astonous_SM__Contact_Person_Name__c = 'Mayank Joshi', Astonous_SM__Country__c = 'US',
+                                                                                                 Astonous_SM__Default__c = true, Astonous_SM__Email__c = 'info@astonous.com', Astonous_SM__Is_it_Residential_Address__c = false, Name = 'Main office',
+                                                                                                 Astonous_SM__Default_Carrier__c = 'UPS', Astonous_SM__Label_Image_Type__c = 'PNG',
+                                                                                                Astonous_SM__Label_Format_Type__c = 'Not Applicable', Astonous_SM__Label_Stock_Type__c = 'Not Applicable', Astonous_SM__Service_Type__c = '003',
+                                                                                                Astonous_SM__Label_Printing_Orientation__c = 'Not Applicable', Astonous_SM__Linear_Unit__c = 'IN',Astonous_SM__Weight_Unit__c = 'LBS',
+                                                                                                Astonous_SM__Phone__c = '9400000000', Astonous_SM__Postal_Code__c = '2342343', Astonous_SM__State__c = 'PA', Astonous_SM__Street__c = '129 Stree', Astonous_SM__Signature_Option__c = '');
+        
+        insert prefRecord;
+    }  
+}
