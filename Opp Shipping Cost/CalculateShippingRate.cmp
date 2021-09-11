@@ -1,0 +1,27 @@
+<aura:component controller="CalculateShippingRatesCtrl" implements="force:hasRecordId,force:lightningQuickActionWithoutHeader">
+    <aura:attribute name="recordId" type="Id" />
+    <aura:attribute name="currentSelectedItem" type="Integer" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="columns" type="List"/> 
+    <aura:attribute name="spinner" type="boolean" default="false"/>
+    <aura:attribute name="data" type="List"/> 	    
+    <div class="slds-section slds-is-open slds-is-relative" aura:id="packagesSection1">
+ 		<aura:if isTrue="{!v.spinner}">
+            <div class="slds-spinner_container">
+                <div class="slds-spinner--brand slds-spinner slds-spinner--small" role="alert">
+                    <span class="slds-assistive-text">Loading...</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+            </div>
+        </aura:if>        
+        <div class="slds-section__content">
+            <lightning:datatable
+                                 keyField="id"
+                                 data="{!v.data}"
+                                 columns="{!v.columns}"
+                                 hideCheckboxColumn="true" onrowaction="{!c.onUpdateQuote}" columnWidthsMode="auto"/>
+            
+        </div>
+    </div>
+</aura:component>
